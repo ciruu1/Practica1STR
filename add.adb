@@ -38,7 +38,20 @@ package body add is
     -----------------------------------------------------------------------
 
     -- Aqui se escriben los cuerpos de las tareas
-    
+    task body SensorDistancia20 is
+    Current_D: Distance_Samples_Type := 0;
+    Current_V: Speed_Samples_Type := 0;
+    begin
+        for i in 1..20 loop
+            Reading_Speed (Current_V);
+            Reading_Distance (Current_D);
+            Display_Distance (Current_D);
+                if (Current_D < 30) then Beep(5);
+                elsif (Current_D < 60 and Current_V > 80) then Beep(2);
+                end if;
+            delay until (Clock + Milliseconds(200));
+        end loop;
+    end SensorDistancia20;
 
 
     ----------------------------------------------------------------------
@@ -69,10 +82,10 @@ package body add is
             --if (Current_V > 110) then Beep (2); end if;
 
          -- Prueba volante
-            Reading_Steering (Current_S);
-            Display_Steering (Current_S);
-            if (Current_S > 30) OR (Current_S < -30) then Light (On);
-                                                     else Light (Off); end if;
+            --Reading_Steering (Current_S);
+            --Display_Steering (Current_S);
+            --if (Current_S > 30) OR (Current_S < -30) then Light (On);
+                                                     --else Light (Off); end if;
 
          -- Prueba Posicion de la cabeza
             --Reading_HeadPosition (Current_H);
