@@ -32,6 +32,10 @@ package body add is
         pragma priority (15);
     end SensorDistancia20;
 
+    task CabezaInclinada is
+        pragma priority (16);
+    end CabezaInclinada;
+
 
     -----------------------------------------------------------------------
     ------------- body of tasks 
@@ -52,6 +56,36 @@ package body add is
             delay until (Clock + Milliseconds(200));
         end loop;
     end SensorDistancia20;
+
+    task body CabezaInclinada is
+    Current_H: HeadPosition_Samples_Type := (+2,-2);
+    Old_Current_H: HeadPosition_Samples_Type := (+2,-2);
+    Current_S: Steering_Samples_Type := 0;
+    begin
+        loop
+            Reading_HeadPosition (Current_H);
+            Display_HeadPosition_Sample (Current_H);
+            Reading_Steering (Current_S);
+            if ((Current_H(x) > 30 and Old_Current_H(x) > 30) or
+            (Current_H(x) < -30 and Old_Current_H(x) < -30)) then
+                -- CABEZA INCLINADA := TRUE
+                New_Line;
+                Put_Line("TRUE");
+            elsif (((Current_H(y) > 30 and Old_Current_H(y) > 30) and Current_S <= 0) or
+            ((Current_H(x) < -30 and Old_Current_H(x) < -30) and Current_S >= 0)) then
+                -- CABEZA INCLINADA := TRUE
+                New_Line;
+                Put_Line("TRUE");
+            else
+                -- CABEZA INCLINADA := FALSE
+                New_Line;
+                Put_Line("FALSE");
+            end if;
+
+            Old_Current_H := Current_H;
+            delay until (Clock + Milliseconds(400));
+        end loop;
+    end CabezaInclinada;
 
 
     ----------------------------------------------------------------------
