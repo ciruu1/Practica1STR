@@ -6,6 +6,8 @@ with System; use System;
 with Tools; use Tools;
 with Devices; use Devices;
 
+with symptoms; use symptoms;
+
 -- Packages needed to generate pulse interrupts       
 -- with Ada.Interrupts.Names;
 -- with Pulse_Interrupt; use Pulse_Interrupt;
@@ -40,6 +42,10 @@ package body add is
         pragma priority (17);
     end GiroVolante;
 
+    task Deteccion is
+        pragma priority (20);
+    end Deteccion;
+
 
     -----------------------------------------------------------------------
     ------------- body of tasks 
@@ -57,21 +63,13 @@ package body add is
             Display_Distance (Current_D);
             Distancia_Segura := (float(Current_V) / 10.0) ** 2;
             if (float(Current_D) < Distancia_Segura / 3.0) then
-            -- PELIGRO COLISION := TRUE
-            New_Line;
-            Put_Line("PELIGRO COLISION");
+                symptoms.Datos.SetDistancia(COLISION);
             elsif (float(Current_D) < Distancia_Segura / 2.0) then
-            -- DISTANCIA IMPRUDENTE := TRUE
-            New_Line;
-            Put_Line("DISTANCIA IMPRUDENTE");
+                symptoms.Datos.SetDistancia(IMPRUDENTE);
             elsif (float(Current_D) < Distancia_Segura) then
-            -- DISTANCIA INSEGURA := TRUE
-            New_Line;
-            Put_Line("DISTANCIA INSEGURA");
+                symptoms.Datos.SetDistancia(INSEGURA);
             else
-            -- DISTANCIA SEGURA
-            New_Line;
-            Put_Line("DISTANCIA SEGURA");
+                symptoms.Datos.SetDistancia(SEGURA);
             end if;
             delay until (Clock + Milliseconds(300));
         end loop;
@@ -88,18 +86,12 @@ package body add is
             Reading_Steering (Current_S);
             if ((Current_H(x) > 30 and Old_Current_H(x) > 30) or
             (Current_H(x) < -30 and Old_Current_H(x) < -30)) then
-                -- CABEZA INCLINADA := TRUE
-                New_Line;
-                Put_Line("TRUE");
+                symptoms.Datos.SetCabezaInclinada(true);
             elsif (((Current_H(y) > 30 and Old_Current_H(y) > 30) and Current_S <= 0) or
             ((Current_H(x) < -30 and Old_Current_H(x) < -30) and Current_S >= 0)) then
-                -- CABEZA INCLINADA := TRUE
-                New_Line;
-                Put_Line("TRUE");
+                symptoms.Datos.SetCabezaInclinada(true);
             else
-                -- CABEZA INCLINADA := FALSE
-                New_Line;
-                Put_Line("FALSE");
+                symptoms.Datos.SetCabezaInclinada(false);
             end if;
 
             Old_Current_H := Current_H;
@@ -116,14 +108,50 @@ package body add is
             Reading_Steering (Current_S);
             Reading_Speed (Current_V);
             if abs(Current_S - Old_S) > 20 and Current_V > 40 then
-                -- VOLANTAZO
-                New_Line;
-                Put_Line("VOLANTAZO");
+                symptoms.Datos.SetVolantazo(true);
+            else
+                symptoms.Datos.SetVolantazo(false);
             end if;
             Old_S := Current_S;
             delay until (Clock + Milliseconds(350));
         end loop;
     end GiroVolante;
+
+    task body Deteccion is
+    Current_V: Speed_Samples_Type := 0;
+    begin
+        loop
+            Reading_Speed (Current_V);
+
+            -- DISTANCIA
+            if symptoms.Datos.GetCabezaInclinada and
+            symptoms.Datos.GetDistancia = COLISION then
+                Beep(5);
+                Activate_Brake;
+            elsif symptoms.Datos.GetDistancia = IMPRUDENTE then
+                Beep(4);
+                Light(On);
+            elsif symptoms.Datos.GetDistancia = INSEGURA then
+                Light(On);
+            end if;
+
+
+            -- CABEZA INCLINADA
+            if symptoms.Datos.GetCabezaInclinada = true then
+                if Current_V >= 70 then
+                    Beep(3);
+                else
+                    Beep(2);
+                end if;
+            end if;
+
+            -- VOLANTAZO
+            if symptoms.Datos.GetVolantazo = true then
+                Beep(1);
+            end if;
+            delay until (Clock + Milliseconds(150));
+        end loop;
+    end Deteccion;
 
     ----------------------------------------------------------------------
     ------------- procedure para probar los dispositivos 
