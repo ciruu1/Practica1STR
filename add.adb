@@ -28,13 +28,17 @@ package body add is
     -----------------------------------------------------------------------
 
     -- Aqui se declaran las tareas que forman el STR
-    task SensorDistancia20 is
+    task DistanciaSeguridad is
         pragma priority (15);
-    end SensorDistancia20;
+    end DistanciaSeguridad;
 
     task CabezaInclinada is
         pragma priority (16);
     end CabezaInclinada;
+
+    task GiroVolante is
+        pragma priority (17);
+    end GiroVolante;
 
 
     -----------------------------------------------------------------------
@@ -42,20 +46,36 @@ package body add is
     -----------------------------------------------------------------------
 
     -- Aqui se escriben los cuerpos de las tareas
-    task body SensorDistancia20 is
+    task body DistanciaSeguridad is
     Current_D: Distance_Samples_Type := 0;
     Current_V: Speed_Samples_Type := 0;
+    Distancia_Segura : float := 0.0;
     begin
-        for i in 1..20 loop
+        loop
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
             Display_Distance (Current_D);
-                if (Current_D < 30) then Beep(5);
-                elsif (Current_D < 60 and Current_V > 80) then Beep(2);
-                end if;
-            delay until (Clock + Milliseconds(200));
+            Distancia_Segura := (float(Current_V) / 10.0) ** 2;
+            if (float(Current_D) < Distancia_Segura / 3.0) then
+            -- PELIGRO COLISION := TRUE
+            New_Line;
+            Put_Line("PELIGRO COLISION");
+            elsif (float(Current_D) < Distancia_Segura / 2.0) then
+            -- DISTANCIA IMPRUDENTE := TRUE
+            New_Line;
+            Put_Line("DISTANCIA IMPRUDENTE");
+            elsif (float(Current_D) < Distancia_Segura) then
+            -- DISTANCIA INSEGURA := TRUE
+            New_Line;
+            Put_Line("DISTANCIA INSEGURA");
+            else
+            -- DISTANCIA SEGURA
+            New_Line;
+            Put_Line("DISTANCIA SEGURA");
+            end if;
+            delay until (Clock + Milliseconds(300));
         end loop;
-    end SensorDistancia20;
+    end DistanciaSeguridad;
 
     task body CabezaInclinada is
     Current_H: HeadPosition_Samples_Type := (+2,-2);
@@ -87,6 +107,23 @@ package body add is
         end loop;
     end CabezaInclinada;
 
+    task body GiroVolante is
+    Current_S: Steering_Samples_Type := 0;
+    Old_S: Steering_Samples_Type := 0;
+    Current_V: Speed_Samples_Type := 0;
+    begin
+        loop
+            Reading_Steering (Current_S);
+            Reading_Speed (Current_V);
+            if abs(Current_S - Old_S) > 20 and Current_V > 40 then
+                -- VOLANTAZO
+                New_Line;
+                Put_Line("VOLANTAZO");
+            end if;
+            Old_S := Current_S;
+            delay until (Clock + Milliseconds(350));
+        end loop;
+    end GiroVolante;
 
     ----------------------------------------------------------------------
     ------------- procedure para probar los dispositivos 
