@@ -56,11 +56,14 @@ package body add is
     Current_D: Distance_Samples_Type := 0;
     Current_V: Speed_Samples_Type := 0;
     Distancia_Segura : float := 0.0;
+    N : integer := 300;
+    Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     begin
         loop
+            Starting_Notice("DistanciaSeguridad");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
-            Display_Distance (Current_D);
+            --Display_Distance (Current_D);
             Distancia_Segura := (float(Current_V) / 10.0) ** 2;
             if (float(Current_D) < Distancia_Segura / 3.0) then
                 symptoms.Datos.SetDistancia(COLISION);
@@ -71,7 +74,10 @@ package body add is
             else
                 symptoms.Datos.SetDistancia(SEGURA);
             end if;
-            delay until (Clock + Milliseconds(300));
+            Finishing_Notice("DistanciaSeguridad");
+
+            delay until Next;
+            Next := Next + Milliseconds(N);
         end loop;
     end DistanciaSeguridad;
 
@@ -79,10 +85,13 @@ package body add is
     Current_H: HeadPosition_Samples_Type := (+2,-2);
     Old_Current_H: HeadPosition_Samples_Type := (+2,-2);
     Current_S: Steering_Samples_Type := 0;
+    N : integer := 400;
+    Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     begin
         loop
+            Starting_Notice("CabezaInclinada");
             Reading_HeadPosition (Current_H);
-            Display_HeadPosition_Sample (Current_H);
+            --Display_HeadPosition_Sample (Current_H);
             Reading_Steering (Current_S);
             if ((Current_H(x) > 30 and Old_Current_H(x) > 30) or
             (Current_H(x) < -30 and Old_Current_H(x) < -30)) then
@@ -95,7 +104,9 @@ package body add is
             end if;
 
             Old_Current_H := Current_H;
-            delay until (Clock + Milliseconds(400));
+            Finishing_Notice("CabezaInclinada");
+            delay until Next;
+            Next := Next + Milliseconds(N);
         end loop;
     end CabezaInclinada;
 
@@ -103,8 +114,11 @@ package body add is
     Current_S: Steering_Samples_Type := 0;
     Old_S: Steering_Samples_Type := 0;
     Current_V: Speed_Samples_Type := 0;
+    N : integer := 350;
+    Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     begin
         loop
+            Starting_Notice("GiroVolante");
             Reading_Steering (Current_S);
             Reading_Speed (Current_V);
             if abs(Current_S - Old_S) > 20 and Current_V > 40 then
@@ -113,14 +127,19 @@ package body add is
                 symptoms.Datos.SetVolantazo(false);
             end if;
             Old_S := Current_S;
-            delay until (Clock + Milliseconds(350));
+            Finishing_Notice("GiroVolante");
+            delay until Next;
+            Next := Next + Milliseconds(N);
         end loop;
     end GiroVolante;
 
     task body Deteccion is
     Current_V: Speed_Samples_Type := 0;
+    N : integer := 150;
+    Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     begin
         loop
+            Starting_Notice("Deteccion");
             Reading_Speed (Current_V);
 
             -- DISTANCIA
@@ -149,7 +168,9 @@ package body add is
             if symptoms.Datos.GetVolantazo = true then
                 Beep(1);
             end if;
-            delay until (Clock + Milliseconds(150));
+            Finishing_Notice("Deteccion");
+            delay until Next;
+            Next := Next + Milliseconds(N);
         end loop;
     end Deteccion;
 
