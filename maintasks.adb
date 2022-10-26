@@ -129,4 +129,53 @@ package body maintasks is
             Next := Next + Milliseconds(N);
         end loop;
     end Riesgos;
+
+    task body Display is
+    N : integer := 1000;
+    Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    Current_V: Speed_Samples_Type := 0;
+    Current_D: Distance_Samples_Type := 0;
+    begin
+        loop
+            Starting_Notice("Display");
+            Reading_Speed (Current_V);
+            Reading_Distance (Current_D);
+            New_Line;
+            Put_Line("----------------DISPLAY----------------");
+            Put("Velocidad actual: ");
+            Print_an_Integer (Integer(Current_V));
+            New_Line;
+            Put_Line("----------------");
+            Put("Distancia actual: ");
+            Print_an_Integer (Integer(Current_D));
+            New_Line;
+            Put_Line("----------------");
+            Put_Line("Sintomas detectados");
+            -- DISTANCIA
+            if symptoms.Datos.GetCabezaInclinada and
+            symptoms.Datos.GetDistancia = COLISION then
+                Put_Line("COLISION INMINENTE");
+            elsif symptoms.Datos.GetDistancia = IMPRUDENTE then
+                Put_Line("DISTANCIA IMPRUDENTE");
+            elsif symptoms.Datos.GetDistancia = INSEGURA then
+                Put_Line("DISTANCIA INSEGURA");
+            end if;
+
+            -- CABEZA INCLINADA
+            if symptoms.Datos.GetCabezaInclinada = true then
+                Put_Line("CABEZA INCLINADA");
+            end if;
+
+            -- VOLANTAZO
+            if symptoms.Datos.GetVolantazo = true then
+                Put_Line("VOLANTAZO");
+            end if;
+
+
+            Put_Line("---------------------------------------");
+            Finishing_Notice("Display");
+            delay until Next;
+            Next := Next + Milliseconds(N);
+        end loop;
+    end Display;
 end maintasks;

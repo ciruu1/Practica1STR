@@ -1,20 +1,24 @@
 package maintasks is
 
     task DistanciaSeguridad is
-        pragma priority (5);
+        pragma priority (14);
     end DistanciaSeguridad;
 
     task CabezaInclinada is
-        pragma priority (3);
+        pragma priority (12);
     end CabezaInclinada;
 
     task GiroVolante is
-        pragma priority (4);
+        pragma priority (13);
     end GiroVolante;
 
     task Riesgos is
-        pragma priority (8);
+        pragma priority (15);
     end Riesgos;
+
+    task Display is
+        pragma priority (11);
+    end Display;
 
 
 end maintasks;
