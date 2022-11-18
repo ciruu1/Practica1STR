@@ -6,6 +6,7 @@ with Tools; use Tools;
 with Devices; use Devices;
 
 with symptoms; use symptoms;
+with measures; use measures;
 
 package body maintasks is
     task body DistanciaSeguridad is
@@ -19,6 +20,7 @@ package body maintasks is
             Starting_Notice("Distancia");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
+            measures.Datos.SetDistancia(Integer(Current_D));
             --Display_Distance (Current_D);
             Distancia_Segura := (float(Current_V) / 10.0) ** 2;
             if (float(Current_D) < Distancia_Segura / 3.0) then
@@ -97,6 +99,7 @@ package body maintasks is
         loop
             Starting_Notice("Riesgos");
             Reading_Speed (Current_V);
+            measures.Datos.SetVelocidad(Integer(Current_V));
 
             -- DISTANCIA
             if symptoms.Datos.GetCabezaInclinada and
@@ -143,11 +146,11 @@ package body maintasks is
             New_Line;
             Put_Line("----------------DISPLAY----------------");
             Put("Velocidad actual: ");
-            Print_an_Integer (Integer(Current_V));
+            Print_an_Integer (measures.Datos.GetVelocidad);
             New_Line;
             Put_Line("----------------");
             Put("Distancia actual: ");
-            Print_an_Integer (Integer(Current_D));
+            Print_an_Integer (measures.Datos.GetDistancia);
             New_Line;
             Put_Line("----------------");
             Put_Line("Sintomas detectados");
