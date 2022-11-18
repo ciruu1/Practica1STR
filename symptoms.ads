@@ -3,6 +3,7 @@ package symptoms is
 type TipoDistancia is (SEGURA, INSEGURA, IMPRUDENTE, COLISION);
 
 Protected Datos is
+    pragma priority (15);
     function GetVolantazo return boolean;
     function GetCabezaInclinada return boolean;
     function GetDistancia return TipoDistancia;
