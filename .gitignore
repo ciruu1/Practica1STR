@@ -5,3 +5,8 @@
 *.o
 *.map
 *.nm
+
+src/*.ali
+src/*.o
+src/*.map
+src/*.nm
