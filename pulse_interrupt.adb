@@ -6,7 +6,6 @@ with Force_External_Interrupt_2;
 
 --with Registro; use Registro;
 with tools; use tools;
-with controlador; use controlador;
 
 package body pulse_interrupt is
 
@@ -30,11 +29,8 @@ package body pulse_interrupt is
          Force_External_Interrupt_2;
          j := j + 1;
 
-         --controlador.Esperar_Evento;
-
          --Hora_Actual (Big_Bang);
-         Put_Line ("======> Interrupción Externa 2 ");
-         --New_Line;
+         --Put ("======> Interrupción Externa 2 ");
       end loop;
    end Interrupt;
 

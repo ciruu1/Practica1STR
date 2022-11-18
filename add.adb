@@ -11,8 +11,8 @@ with symptoms; use symptoms;
 with maintasks; use maintasks;
 
 -- Packages needed to generate pulse interrupts       
-with Ada.Interrupts.Names;
-with Pulse_Interrupt; use Pulse_Interrupt;
+-- with Ada.Interrupts.Names;
+-- with Pulse_Interrupt; use Pulse_Interrupt;
 
 package body add is
 
