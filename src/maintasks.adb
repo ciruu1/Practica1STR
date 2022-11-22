@@ -38,7 +38,8 @@ package body maintasks is
             Finishing_Notice("Distancia");
 
             D := Clock - I;
-            Put_Line(Duration'Image(To_Duration(D)));
+            Put(" |Duracion ---->>> ");
+            Put(Duration'Image(To_Duration(D)));
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -74,7 +75,8 @@ package body maintasks is
             Finishing_Notice("Cabeza");
 
             D := Clock - I;
-            Put_Line(Duration'Image(To_Duration(D)));
+            Put(" |Duracion ---->>> ");
+            Put(Duration'Image(To_Duration(D)));
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -104,7 +106,8 @@ package body maintasks is
             Finishing_Notice("Volante");
 
             D := Clock - I;
-            Put_Line(Duration'Image(To_Duration(D)));
+            Put(" |Duracion ---->>> ");
+            Put(Duration'Image(To_Duration(D)));
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -115,6 +118,7 @@ package body maintasks is
     Current_V: Speed_Samples_Type := 0;
     N : integer := 150;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    Dist : TipoDistancia;
     I : Time;
     D : Time_Span;
     begin
@@ -124,15 +128,17 @@ package body maintasks is
             Reading_Speed (Current_V);
             measures.Datos.SetVelocidad(Integer(Current_V));
 
+            Dist := symptoms.Datos.GetDistancia;
+
             -- DISTANCIA
             if symptoms.Datos.GetCabezaInclinada and
-            symptoms.Datos.GetDistancia = COLISION then
+            Dist = COLISION then
                 Beep(5);
                 Activate_Brake;
-            elsif symptoms.Datos.GetDistancia = IMPRUDENTE then
+            elsif Dist = IMPRUDENTE then
                 Beep(4);
                 Light(On);
-            elsif symptoms.Datos.GetDistancia = INSEGURA then
+            elsif Dist = INSEGURA then
                 Light(On);
             end if;
 
@@ -165,11 +171,13 @@ package body maintasks is
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     Current_V: Speed_Samples_Type := 0;
     Current_D: Distance_Samples_Type := 0;
+    Dist : TipoDistancia;
     I : Time;
     D : Time_Span;
     begin
         loop
             I := Clock;
+            Dist := symptoms.Datos.GetDistancia;
             Starting_Notice("Display");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
@@ -186,11 +194,11 @@ package body maintasks is
             Put_Line("Sintomas detectados");
             -- DISTANCIA
             if symptoms.Datos.GetCabezaInclinada and
-            symptoms.Datos.GetDistancia = COLISION then
+            Dist = COLISION then
                 Put_Line("COLISION INMINENTE");
-            elsif symptoms.Datos.GetDistancia = IMPRUDENTE then
+            elsif Dist = IMPRUDENTE then
                 Put_Line("DISTANCIA IMPRUDENTE");
-            elsif symptoms.Datos.GetDistancia = INSEGURA then
+            elsif Dist = INSEGURA then
                 Put_Line("DISTANCIA INSEGURA");
             end if;
 
@@ -209,7 +217,8 @@ package body maintasks is
             Finishing_Notice("Display");
 
             D := Clock - I;
-            Put_Line(Duration'Image(To_Duration(D)));
+            Put(" |Duracion ---->>> ");
+            Put(Duration'Image(To_Duration(D)));
 
             delay until Next;
             Next := Next + Milliseconds(N);
