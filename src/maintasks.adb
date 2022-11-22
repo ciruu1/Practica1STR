@@ -15,8 +15,11 @@ package body maintasks is
     Distancia_Segura : float := 0.0;
     N : integer := 300;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    I : Time;
+    D : Time_Span;
     begin
         loop
+            I := Clock;
             Starting_Notice("Distancia");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
@@ -34,6 +37,9 @@ package body maintasks is
             end if;
             Finishing_Notice("Distancia");
 
+            D := Clock - I;
+            Put_Line(Duration'Image(To_Duration(D)));
+
             delay until Next;
             Next := Next + Milliseconds(N);
         end loop;
@@ -45,8 +51,11 @@ package body maintasks is
     Current_S: Steering_Samples_Type := 0;
     N : integer := 400;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    I : Time;
+    D : Time_Span;
     begin
         loop
+            I := Clock;
             Starting_Notice("Cabeza");
             Reading_HeadPosition (Current_H);
             --Display_HeadPosition_Sample (Current_H);
@@ -63,6 +72,10 @@ package body maintasks is
 
             Old_Current_H := Current_H;
             Finishing_Notice("Cabeza");
+
+            D := Clock - I;
+            Put_Line(Duration'Image(To_Duration(D)));
+
             delay until Next;
             Next := Next + Milliseconds(N);
         end loop;
@@ -74,8 +87,11 @@ package body maintasks is
     Current_V: Speed_Samples_Type := 0;
     N : integer := 350;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    I : Time;
+    D : Time_Span;
     begin
         loop
+            I := Clock;
             Starting_Notice("Volante");
             Reading_Steering (Current_S);
             Reading_Speed (Current_V);
@@ -86,6 +102,10 @@ package body maintasks is
             end if;
             Old_S := Current_S;
             Finishing_Notice("Volante");
+
+            D := Clock - I;
+            Put_Line(Duration'Image(To_Duration(D)));
+
             delay until Next;
             Next := Next + Milliseconds(N);
         end loop;
@@ -95,8 +115,11 @@ package body maintasks is
     Current_V: Speed_Samples_Type := 0;
     N : integer := 150;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
+    I : Time;
+    D : Time_Span;
     begin
         loop
+            I := Clock;
             Starting_Notice("Riesgos");
             Reading_Speed (Current_V);
             measures.Datos.SetVelocidad(Integer(Current_V));
@@ -128,6 +151,10 @@ package body maintasks is
                 Beep(1);
             end if;
             Finishing_Notice("Riesgos");
+
+            D := Clock - I;
+            Put_Line(Duration'Image(To_Duration(D)));
+
             delay until Next;
             Next := Next + Milliseconds(N);
         end loop;
@@ -138,8 +165,11 @@ package body maintasks is
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     Current_V: Speed_Samples_Type := 0;
     Current_D: Distance_Samples_Type := 0;
+    I : Time;
+    D : Time_Span;
     begin
         loop
+            I := Clock;
             Starting_Notice("Display");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
@@ -177,6 +207,10 @@ package body maintasks is
 
             Put_Line("---------------------------------------");
             Finishing_Notice("Display");
+
+            D := Clock - I;
+            Put_Line(Duration'Image(To_Duration(D)));
+
             delay until Next;
             Next := Next + Milliseconds(N);
         end loop;
