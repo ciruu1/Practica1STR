@@ -159,7 +159,8 @@ package body maintasks is
             Finishing_Notice("Riesgos");
 
             D := Clock - I;
-            Put_Line(Duration'Image(To_Duration(D)));
+            Put(" |Duracion ---->>> ");
+            Put(Duration'Image(To_Duration(D)));
 
             delay until Next;
             Next := Next + Milliseconds(N);
