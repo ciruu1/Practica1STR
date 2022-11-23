@@ -19,8 +19,8 @@ package body maintasks is
     D : Time_Span;
     begin
         loop
-            I := Clock;
             Starting_Notice("Distancia");
+            I := Clock;
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
             measures.Datos.SetDistancia(Integer(Current_D));
@@ -35,11 +35,11 @@ package body maintasks is
             else
                 symptoms.Datos.SetDistancia(SEGURA);
             end if;
-            Finishing_Notice("Distancia");
 
             D := Clock - I;
             Put(" |Duracion ---->>> ");
             Put(Duration'Image(To_Duration(D)));
+            Finishing_Notice("Distancia");
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -56,8 +56,8 @@ package body maintasks is
     D : Time_Span;
     begin
         loop
-            I := Clock;
             Starting_Notice("Cabeza");
+            I := Clock;
             Reading_HeadPosition (Current_H);
             --Display_HeadPosition_Sample (Current_H);
             Reading_Steering (Current_S);
@@ -72,11 +72,12 @@ package body maintasks is
             end if;
 
             Old_Current_H := Current_H;
-            Finishing_Notice("Cabeza");
+
 
             D := Clock - I;
             Put(" |Duracion ---->>> ");
             Put(Duration'Image(To_Duration(D)));
+            Finishing_Notice("Cabeza");
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -93,8 +94,8 @@ package body maintasks is
     D : Time_Span;
     begin
         loop
-            I := Clock;
             Starting_Notice("Volante");
+            I := Clock;
             Reading_Steering (Current_S);
             Reading_Speed (Current_V);
             if abs(Current_S - Old_S) > 20 and Current_V > 40 then
@@ -103,11 +104,12 @@ package body maintasks is
                 symptoms.Datos.SetVolantazo(false);
             end if;
             Old_S := Current_S;
-            Finishing_Notice("Volante");
+
 
             D := Clock - I;
             Put(" |Duracion ---->>> ");
             Put(Duration'Image(To_Duration(D)));
+            Finishing_Notice("Volante");
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -124,8 +126,8 @@ package body maintasks is
     D : Time_Span;
     begin
         loop
-            I := Clock;
             Starting_Notice("Riesgos");
+            I := Clock;
             Reading_Speed (Current_V);
             measures.Datos.SetVelocidad(Integer(Current_V));
 
@@ -158,11 +160,13 @@ package body maintasks is
             if symptoms.Datos.GetVolantazo = true then
                 Beep(1);
             end if;
-            Finishing_Notice("Riesgos");
+
 
             D := Clock - I;
             Put(" |Duracion ---->>> ");
             Put(Duration'Image(To_Duration(D)));
+
+            Finishing_Notice("Riesgos");
 
             delay until Next;
             Next := Next + Milliseconds(N);
@@ -179,21 +183,19 @@ package body maintasks is
     D : Time_Span;
     begin
         loop
+            Starting_Notice("Display");
             I := Clock;
             Dist := symptoms.Datos.GetDistancia;
-            Starting_Notice("Display");
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
             New_Line;
-            Put_Line("----------------DISPLAY----------------");
+            Put_Line("-DISPLAY-");
             Put("Velocidad actual: ");
             Print_an_Integer (measures.Datos.GetVelocidad);
             New_Line;
-            Put_Line("----------------");
             Put("Distancia actual: ");
             Print_an_Integer (measures.Datos.GetDistancia);
             New_Line;
-            Put_Line("----------------");
             Put_Line("Sintomas detectados");
             -- DISTANCIA
             if symptoms.Datos.GetCabezaInclinada and
@@ -215,13 +217,11 @@ package body maintasks is
                 Put_Line("VOLANTAZO");
             end if;
 
-
-            Put_Line("---------------------------------------");
-            Finishing_Notice("Display");
-
             D := Clock - I;
             Put(" |Duracion ---->>> ");
             Put(Duration'Image(To_Duration(D)));
+
+            Finishing_Notice("Display");
 
             delay until Next;
             Next := Next + Milliseconds(N);
