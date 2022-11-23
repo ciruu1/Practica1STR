@@ -119,6 +119,7 @@ package body maintasks is
     N : integer := 150;
     Next : Ada.Real_Time.Time := Big_Bang + Milliseconds(N);
     Dist : TipoDistancia;
+    Cab : Boolean;
     I : Time;
     D : Time_Span;
     begin
@@ -129,9 +130,10 @@ package body maintasks is
             measures.Datos.SetVelocidad(Integer(Current_V));
 
             Dist := symptoms.Datos.GetDistancia;
+            Cab := symptoms.Datos.GetCabezaInclinada;
 
             -- DISTANCIA
-            if symptoms.Datos.GetCabezaInclinada and
+            if Cab and
             Dist = COLISION then
                 Beep(5);
                 Activate_Brake;
@@ -144,7 +146,7 @@ package body maintasks is
 
 
             -- CABEZA INCLINADA
-            if symptoms.Datos.GetCabezaInclinada = true then
+            if Cab then
                 if Current_V >= 70 then
                     Beep(3);
                 else
