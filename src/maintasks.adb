@@ -188,15 +188,13 @@ package body maintasks is
             Dist := symptoms.Datos.GetDistancia;
             Reading_Speed (Current_V);
             Reading_Distance (Current_D);
-            New_Line;
-            Put_Line("-DISPLAY-");
-            Put("Velocidad actual: ");
+            Put("V: ");
             Print_an_Integer (measures.Datos.GetVelocidad);
             New_Line;
-            Put("Distancia actual: ");
+            Put("D:");
             Print_an_Integer (measures.Datos.GetDistancia);
             New_Line;
-            Put_Line("Sintomas detectados");
+            Put_Line("Sintomas");
             -- DISTANCIA
             if symptoms.Datos.GetCabezaInclinada and
             Dist = COLISION then
